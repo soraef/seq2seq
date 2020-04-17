@@ -16,7 +16,7 @@ python train.py in20_out40_epochs_1000 --input_len 20 --output_len 40 --epochs 1
 ```
 epoch数を1000回に増やしてみた
 
-![in20_out40_epochs_1000.png](result/in20_out40_epochs1000.png)
+![in20_out40_epochs_1000.png](result/in20_out40_epochs_1000.png)
 
 
 ## 参考
