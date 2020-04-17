@@ -22,6 +22,7 @@ parser.add_argument("--optimizer",      default="adam", choices=["adam", "sgd"])
 parser.add_argument("--freq",           default=60,  type=int)
 parser.add_argument("--input_len",      default=20,  type=int)
 parser.add_argument("--output_len",     default=20,  type=int)
+parser.add_argument("--batch_size",     default=600, type=int)
 args = parser.parse_args()
 
 # データセット作成用の関数
@@ -30,8 +31,7 @@ def sin_list(data_num, offset=0, freq=60):
 
 # データは[時系列数, バッチサイズ, 1データの次元数]という形
 # 今回は20点のsin波の入力から次の20点のsin波を予測するので[20, batch_size, 1]という形になる
-def mk_dataset(input_len=20, output_len=20, freq=60):
-    batch_size = 600
+def mk_dataset(input_len=20, output_len=20, freq=60, batch_size=600):
     xs = []
     ys = []
     for i in range(batch_size):
@@ -55,9 +55,10 @@ cpu = torch.device("cpu")
 # 訓練データを準備
 INPUT_LEN  = args.input_len
 OUTPUT_LEN = args.output_len
-FREQ = args.freq
+FREQ       = args.freq
+BATCH_SIZE = args.batch_size
 
-train_x, train_y = mk_dataset(input_len=INPUT_LEN, output_len=OUTPUT_LEN, freq=FREQ)
+train_x, train_y = mk_dataset(input_len=INPUT_LEN, output_len=OUTPUT_LEN, freq=FREQ, batch_size=BATCH_SIZE)
 
 train_x = torch.from_numpy(train_x).to(device)
 train_y = torch.from_numpy(train_y).to(device)

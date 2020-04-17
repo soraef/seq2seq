@@ -17,3 +17,7 @@ python train.py in20_out40_epochs_1000 --input_len 20 --output_len 40 --epochs 1
 epoch数を1000回に増やしてみた
 
 ![in20_out40_epochs_1000.png](result/in20_out40_epochs1000.png)
+
+
+## 参考
+(https://github.com/bentrevett/pytorch-seq2seq/blob/master/1%20-%20Sequence%20to%20Sequence%20Learning%20with%20Neural%20Networks.ipynb)
