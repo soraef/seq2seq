@@ -20,6 +20,8 @@ parser.add_argument("--dropout_rate",   default=0.5, type=float)
 parser.add_argument("--epochs",         default=100, type=int)
 parser.add_argument("--optimizer",      default="adam", choices=["adam", "sgd"])
 parser.add_argument("--freq",           default=60,  type=int)
+parser.add_argument("--input_len",      default=20,  type=int)
+parser.add_argument("--output_len",     default=20,  type=int)
 args = parser.parse_args()
 
 # データセット作成用の関数
@@ -28,14 +30,15 @@ def sin_list(data_num, offset=0, freq=60):
 
 # データは[時系列数, バッチサイズ, 1データの次元数]という形
 # 今回は20点のsin波の入力から次の20点のsin波を予測するので[20, batch_size, 1]という形になる
-def mk_dataset():
+def mk_dataset(input_len=20, output_len=20, freq=60):
     batch_size = 600
     xs = []
     ys = []
     for i in range(batch_size):
-        wave = sin_list(40, i, freq=args.freq)
-        x = np.array(wave[:20]).astype(np.float32)[:,np.newaxis, np.newaxis]
-        y = np.array([0] + wave[20:]).astype(np.float32)[:,np.newaxis, np.newaxis]
+        # (input_len + output_len)個の正弦波の点を求めておいて分割する
+        wave = sin_list(input_len + output_len, i, freq=freq)
+        x = np.array(wave[:input_len]).astype(np.float32)[:,np.newaxis, np.newaxis]
+        y = np.array([0] + wave[input_len:]).astype(np.float32)[:,np.newaxis, np.newaxis]
 
         xs.append(x)
         ys.append(y)
@@ -50,7 +53,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 cpu = torch.device("cpu")
 
 # 訓練データを準備
-train_x, train_y = mk_dataset()
+INPUT_LEN  = args.input_len
+OUTPUT_LEN = args.output_len
+FREQ = args.freq
+
+train_x, train_y = mk_dataset(input_len=INPUT_LEN, output_len=OUTPUT_LEN, freq=FREQ)
 
 train_x = torch.from_numpy(train_x).to(device)
 train_y = torch.from_numpy(train_y).to(device)
@@ -100,7 +107,7 @@ for epoch in range(args.epochs):
 
     optimizer.step()
     if epoch % 10 == 0:
-        print(loss.item())
+        print(f"loss:{loss.item()}")
 
 # test
 # 今回はtrain_xの1番目のバッチをtestデータとして使う
@@ -116,8 +123,8 @@ with torch.no_grad():
 x = test_x[:, 0, 0].to(cpu).detach().tolist()
 y = outputs[:, 0, 0].to(cpu).detach().tolist()[1:]
 
-plt.plot(list(range(20)), x, color="r", label="train_x")
-plt.plot(list(range(19, 40)), [x[-1]] + y, color="b", label="predict_y")
+plt.plot(list(range(INPUT_LEN)), x, color="r", label="train_x")
+plt.plot(list(range(INPUT_LEN - 1, INPUT_LEN + OUTPUT_LEN)), [x[-1]] + y, color="b", label="predict_y")
 plt.savefig("result/" + args.output_file_name)
 
 

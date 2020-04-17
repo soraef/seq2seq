@@ -38,7 +38,6 @@ class Decoder(nn.Module):
         self.fc_out = nn.Linear(hidden_dim, output_dim)
 
     def forward(self, x, hidden, cell):
-
         # x = [batch_size, x_size] => [1, batch_size, x_size]
         x = x.unsqueeze(0)
 
@@ -72,6 +71,7 @@ class Seq2Seq(nn.Module):
 
         y = ys[0, :, :]
 
+        # 教師データの長さ分だけoutputを計算する
         for t in range(1, ys_len):
             output, hidden, cell = self.decoder(y, hidden, cell)
             outputs[t] = output
