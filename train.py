@@ -124,8 +124,9 @@ with torch.no_grad():
 x = test_x[:, 0, 0].to(cpu).detach().tolist()
 y = outputs[:, 0, 0].to(cpu).detach().tolist()[1:]
 
-plt.plot(list(range(INPUT_LEN)), x, color="r", label="train_x")
-plt.plot(list(range(INPUT_LEN - 1, INPUT_LEN + OUTPUT_LEN)), [x[-1]] + y, color="b", label="predict_y")
+plt.plot(list(range(INPUT_LEN)), x, color="r", label="input")
+plt.plot(list(range(INPUT_LEN - 1, INPUT_LEN + OUTPUT_LEN)), [x[-1]] + y, color="b", label="predict")
+plt.legend()
 plt.savefig("result/" + args.output_file_name)
 
 
