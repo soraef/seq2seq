@@ -14,11 +14,12 @@ from model import Seq2Seq, Encoder, Decoder
 
 parser = argparse.ArgumentParser()
 parser.add_argument("output_file_name", default="result.png")
-parser.add_argument("--hidden_dim", type=int, default=64)
-parser.add_argument("--n_layers", type=int, default=3)
-parser.add_argument("--dropout_rate", type=float, default=0.5)
-parser.add_argument("--epochs", type=int, default=100)
-parser.add_argument("--optimizer", default="adam", choices=["adam", "sgd"])
+parser.add_argument("--hidden_dim",     default=64,  type=int)
+parser.add_argument("--n_layers",       default=3,   type=int)
+parser.add_argument("--dropout_rate",   default=0.5, type=float)
+parser.add_argument("--epochs",         default=100, type=int)
+parser.add_argument("--optimizer",      default="adam", choices=["adam", "sgd"])
+parser.add_argument("--freq",           default=60,  type=int)
 args = parser.parse_args()
 
 # データセット作成用の関数
@@ -32,7 +33,7 @@ def mk_dataset():
     xs = []
     ys = []
     for i in range(batch_size):
-        wave = sin_list(40, i)
+        wave = sin_list(40, i, freq=args.freq)
         x = np.array(wave[:20]).astype(np.float32)[:,np.newaxis, np.newaxis]
         y = np.array([0] + wave[20:]).astype(np.float32)[:,np.newaxis, np.newaxis]
 
